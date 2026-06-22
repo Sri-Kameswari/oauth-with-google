@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 import com.skt.oauth.config.GoogleOAuthProperties;
+import com.skt.oauth.oauth.TokenClient;
+import com.skt.oauth.oauth.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AuthController {
 
   private final GoogleOAuthProperties oauthProperties;
+  private final TokenClient tokenClient;
 
   @Autowired
-  public AuthController(GoogleOAuthProperties oauthProperties) {
+  public AuthController(GoogleOAuthProperties oauthProperties, TokenClient tokenClient) {
     this.oauthProperties = oauthProperties;
+    this.tokenClient = tokenClient;
   }
 
   @GetMapping("/oauth2/authorize/google")
@@ -68,7 +72,8 @@ public class AuthController {
     // State is valid — remove it from session so it can't be reused
     session.removeAttribute("oauth_state");
 
-    return "Callback received. Code starts with: " + code.substring(0, 10) + "...";
+    TokenResponse tokenResponse = tokenClient.exchange(code);
+    return "Token exchange successful. ID token starts with: " + tokenResponse.getAccessToken().substring(0, 20) + "...";
   }
 
   private String generateRandomValue() {
