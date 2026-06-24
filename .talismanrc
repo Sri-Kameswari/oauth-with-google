@@ -7,4 +7,6 @@ fileignoreconfig:
   checksum: 44ad2082f4f205443b4ab49eea152efa2cd14085d346daacfd57734b9e13cab2
 - filename: src/main/java/com/skt/oauth/oauth/TokenClient.java
   checksum: 76349dc194d37e379787b10692f77d9f1e330d7608810e0a6f39fe148fc71ba6
+- filename: src/main/java/com/skt/oauth/oauth/IdTokenValidator.java
+  checksum: 4aefbfb61b8afe4d9b61bcb352bfb505ed844a447dd14d2e625544ac0a66bfc6
 version: "1.0"

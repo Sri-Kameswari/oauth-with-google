@@ -3,8 +3,10 @@ package com.skt.oauth.controller;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Map;
 
 import com.skt.oauth.config.GoogleOAuthProperties;
+import com.skt.oauth.oauth.IdTokenValidator;
 import com.skt.oauth.oauth.TokenClient;
 import com.skt.oauth.oauth.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,11 +22,13 @@ public class AuthController {
 
   private final GoogleOAuthProperties oauthProperties;
   private final TokenClient tokenClient;
+  private final IdTokenValidator idTokenValidator;
 
   @Autowired
-  public AuthController(GoogleOAuthProperties oauthProperties, TokenClient tokenClient) {
+  public AuthController(GoogleOAuthProperties oauthProperties, TokenClient tokenClient, IdTokenValidator idTokenValidator) {
     this.oauthProperties = oauthProperties;
     this.tokenClient = tokenClient;
+    this.idTokenValidator = idTokenValidator;
   }
 
   @GetMapping("/oauth2/authorize/google")
@@ -73,7 +77,14 @@ public class AuthController {
     session.removeAttribute("oauth_state");
 
     TokenResponse tokenResponse = tokenClient.exchange(code);
-    return "Token exchange successful. ID token starts with: " + tokenResponse.getAccessToken().substring(0, 20) + "...";
+    try {
+      Map<String, Object> claims = idTokenValidator.validate(tokenResponse.getIdToken());
+      String email = (String) claims.get("email");
+      String name = (String) claims.get("name");
+      return "Validated! Welcome " + name + " (" + email + ")";
+    } catch (Exception e) {
+      return "ID token validation failed: " + e.getMessage();
+    }
   }
 
   private String generateRandomValue() {
