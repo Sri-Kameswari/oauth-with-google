@@ -9,9 +9,12 @@ import com.skt.oauth.config.GoogleOAuthProperties;
 import com.skt.oauth.oauth.IdTokenValidator;
 import com.skt.oauth.oauth.TokenClient;
 import com.skt.oauth.oauth.TokenResponse;
+import com.skt.oauth.session.SessionUser;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +59,8 @@ public class AuthController {
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "state", required = false) String state,
       @RequestParam(value = "error", required = false) String error,
-      HttpSession session) {
+      HttpSession session,
+      HttpServletRequest request) throws IOException {
 
     if(error != null) {
       return "Login failed: " + error;
@@ -79,12 +83,46 @@ public class AuthController {
     TokenResponse tokenResponse = tokenClient.exchange(code);
     try {
       Map<String, Object> claims = idTokenValidator.validate(tokenResponse.getIdToken());
-      String email = (String) claims.get("email");
-      String name = (String) claims.get("name");
-      return "Validated! Welcome " + name + " (" + email + ")";
+
+      // Build a typed session user from validated claims
+      SessionUser sessionUser = new SessionUser(
+          (String) claims.get("sub"),
+          (String) claims.get("email"),
+          (String) claims.get("name"),
+          (String) claims.get("picture")
+      );
+
+      session.invalidate();
+      session = request.getSession(true);
+      session.setAttribute("user", sessionUser);
+
+      return "Validated! Welcome " + sessionUser.getName() + " (" + sessionUser.getEmail() + ")";
     } catch (Exception e) {
       return "ID token validation failed: " + e.getMessage();
     }
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<?> me(HttpSession session) {
+
+    SessionUser user = (SessionUser) session.getAttribute("user");
+
+    if (user == null) {
+      return ResponseEntity.status(401).body("Not logged in");
+    }
+
+    return ResponseEntity.ok(Map.of(
+        "sub", user.getSub(),
+        "email", user.getEmail(),
+        "name", user.getName(),
+        "picture", user.getPicture()
+    ));
+  }
+
+  @GetMapping("/logout")
+  public String logout(HttpSession session) {
+    session.invalidate();
+    return "Logged out successfully";
   }
 
   private String generateRandomValue() {

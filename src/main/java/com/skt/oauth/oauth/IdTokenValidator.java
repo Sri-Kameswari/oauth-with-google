@@ -3,7 +3,6 @@ package com.skt.oauth.oauth;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.nimbusds.jose.JWSVerifier;
