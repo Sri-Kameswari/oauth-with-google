@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['JetBrains Mono', 'monospace'],
+              sans: ['Work Sans', 'sans-serif'],
+            },
+            colors: {
+              cloud: {
+                50: '#fafbfc', 100: '#f1f5f9', 200: '#e8ecf1',
+                300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b',
+                600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+              },
+              brand: {
+                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                600: '#2563eb', 700: '#1d4ed8',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes badgePulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+        50%       { box-shadow: 0 0 0 6px rgba(59,130,246,0); }
+      }
+      .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+      .hero-title {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .grid-bg {
+        background-image:
+          linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .flow-card {
+        animation: fadeInUp 0.5s ease forwards;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      }
+      .flow-card:hover {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 1px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.12);
+        transform: translateY(-2px);
+      }
+      .flow-card:hover .step-badge { animation: badgePulse 1s ease infinite; }
+      .code-token {
+        font-family: 'JetBrains Mono', monospace;
+        background: rgba(59,130,246,0.08);
+        border: 1px solid rgba(59,130,246,0.2);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 0.78em;
+        color: #3b82f6;
+      }
+      .logo-mark {
+        background: linear-gradient(135deg, #2563eb, #60a5fa);
+        border-radius: 8px;
+      }
+      .google-btn-styled {
+        transition: all 0.3s ease;
+        font-family: 'Work Sans', sans-serif;
+      }
+      .google-btn-styled:hover {
+        background: rgba(59,130,246,0.06);
+        border-color: #3b82f6;
+        color: #3b82f6;
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

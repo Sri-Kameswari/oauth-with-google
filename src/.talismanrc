@@ -1,0 +1,6 @@
+fileignoreconfig:
+- filename: package-lock.json
+  checksum: c3210a42827efbc6f80339639efa0169e62271d0a01c2ec4cd2cb5a2859ac02e
+- filename: src/App.jsx
+  checksum: 3a8abd8efdc97b78f24e94d1d48c2a287080fb468f27c19ee09f1b71d222c389
+version: "1.0"
