@@ -1,16 +1,92 @@
-# React + Vite
+# OAuth 2.0 Manual Implementation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A hands-on implementation of Google Login using the OAuth 2.0 Authorization Code Flow with OpenID Connect, built without Spring Security OAuth abstractions to understand every step of the protocol.
 
-Currently, two official plugins are available:
+## What's built
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Authorization request with state generation (CSRF protection)
+- Callback handling with state validation
+- Server-to-server token exchange
+- ID token validation — JWKS fetch, RS256 signature verification, claims check (`iss`, `aud`, `exp`, `iat`)
+- Application session management with session fixation protection
+- Logout
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Tech |
+|---|---|
+| Backend | Java 17, Spring Boot 3.3, Nimbus JOSE+JWT |
+| Frontend | React 18, Vite |
 
-## Expanding the ESLint configuration
+## Project structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+OAuth/
+├── backend/      Spring Boot app
+└── frontend/     React + Vite app
+```
+
+## Setup
+
+### Prerequisites
+- Java 17+
+- Node 18+
+- A Google Cloud project with an OAuth 2.0 Web Client ([console.cloud.google.com](https://console.cloud.google.com))
+
+### Google Cloud
+1. Create an OAuth 2.0 Client ID (Web application type)
+2. Add `http://localhost:8080/login/oauth2/callback/google` as an authorised redirect URI
+3. Add your Google account as a test user
+
+### Backend
+
+```bash
+cd backend
+```
+
+Create `src/main/resources/application-local.properties`:
+
+```properties
+google.oauth.client-id=YOUR_CLIENT_ID
+google.oauth.client-secret=YOUR_CLIENT_SECRET
+google.oauth.redirect-uri=http://localhost:8080/login/oauth2/callback/google
+google.oauth.authorization-endpoint=https://accounts.google.com/o/oauth2/v2/auth
+google.oauth.token-endpoint=https://oauth2.googleapis.com/token
+google.oauth.jwks-endpoint=https://www.googleapis.com/oauth2/v3/certs
+google.oauth.issuer=https://accounts.google.com
+google.oauth.scope=openid email profile
+google.oauth.frontend-url=http://localhost:5173
+spring.profiles.active=local
+```
+
+Run:
+```bash
+./mvnw spring-boot:run
+```
+
+Backend starts on `http://localhost:8080`.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend starts on `http://localhost:5173`.
+
+## Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/oauth2/authorize/google` | Starts the login flow |
+| `GET` | `/login/oauth2/callback/google` | Google callback — exchanges code, validates token, creates session |
+| `GET` | `/me` | Returns logged-in user info or 401 |
+| `GET` | `/logout` | Invalidates session |
+
+## What's intentionally excluded
+
+- `spring-boot-starter-oauth2-client` — the point is to understand what it does under the hood
+- Database — users are held in session only
+- Token refresh — out of scope for a login-only flow
