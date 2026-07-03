@@ -2,6 +2,9 @@
 
 A hands-on implementation of Google Login using the OAuth 2.0 Authorization Code Flow with OpenID Connect, built without Spring Security OAuth abstractions to understand every step of the protocol.
 
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/fada492b-adda-486d-a409-ba453870883f" />
+
+
 ## What's built
 
 - Authorization request with state generation (CSRF protection)
@@ -10,6 +13,10 @@ A hands-on implementation of Google Login using the OAuth 2.0 Authorization Code
 - ID token validation — JWKS fetch, RS256 signature verification, claims check (`iss`, `aud`, `exp`, `iat`)
 - Application session management with session fixation protection
 - Logout
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/4fb1596b-a4de-431a-aab8-3cd3b9420fdb" />
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/a5bbabd2-0ccf-470d-85b4-58903a198838" />
+
 
 ## Stack
 
