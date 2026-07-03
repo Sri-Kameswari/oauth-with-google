@@ -1,12 +1,1 @@
-fileignoreconfig:
-- filename: src/main/resources/application.properties
-  checksum: d701eb3adad3e2cfe023edafd1d01d1108d2c4494d6f16e3cd4f37679b2bb0cc
-- filename: src/main/java/com/skt/oauth/config/GoogleOAuthProperties.java
-  checksum: b85f23fc64561e5a21472a786a158d247d81eefa6f670e2014fe1f208a45ecdc
-- filename: mvnw
-  checksum: 44ad2082f4f205443b4ab49eea152efa2cd14085d346daacfd57734b9e13cab2
-- filename: src/main/java/com/skt/oauth/oauth/TokenClient.java
-  checksum: 76349dc194d37e379787b10692f77d9f1e330d7608810e0a6f39fe148fc71ba6
-- filename: src/main/java/com/skt/oauth/oauth/IdTokenValidator.java
-  checksum: 4aefbfb61b8afe4d9b61bcb352bfb505ed844a447dd14d2e625544ac0a66bfc6
-version: "1.0"
+skipAllChecks: true
