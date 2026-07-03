@@ -14,6 +14,7 @@ public class GoogleOAuthProperties {
     private String jwksEndpoint;
     private String issuer;
     private String scope;
+    private String frontendUrl;
 
     public String getClientId() {
       return clientId;
@@ -77,5 +78,13 @@ public class GoogleOAuthProperties {
 
     public void setScope(String scope) {
       this.scope = scope;
+    }
+
+    public String getFrontendUrl() {
+      return frontendUrl;
+    }
+
+    public void setFrontendUrl(String frontendUrl) {
+      this.frontendUrl = frontendUrl;
     }
 }

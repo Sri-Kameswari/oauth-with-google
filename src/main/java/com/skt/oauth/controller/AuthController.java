@@ -55,26 +55,30 @@ public class AuthController {
   }
 
   @GetMapping("/login/oauth2/callback/google")
-  public String callback(
+  public void callback(
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "state", required = false) String state,
       @RequestParam(value = "error", required = false) String error,
       HttpSession session,
-      HttpServletRequest request) throws IOException {
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
 
     if(error != null) {
-      return "Login failed: " + error;
+      response.sendRedirect(oauthProperties.getFrontendUrl() + "?error=" + error);
+      return;
     }
 
     if (state == null || code == null) {
-      return "Invalid callback: missing state or code";
+      response.sendRedirect(oauthProperties.getFrontendUrl() + "?error=invalid_callback");
+      return;
     }
 
     // Validate state against what we stored in the session
     String savedState = (String) session.getAttribute("oauth_state");
 
     if (savedState == null || !savedState.equals(state)) {
-      return "State mismatch — possible CSRF attack, aborting login";
+      response.sendRedirect(oauthProperties.getFrontendUrl() + "?error=state_mismatch");
+      return;
     }
 
     // State is valid — remove it from session so it can't be reused
@@ -96,9 +100,9 @@ public class AuthController {
       session = request.getSession(true);
       session.setAttribute("user", sessionUser);
 
-      return "Validated! Welcome " + sessionUser.getName() + " (" + sessionUser.getEmail() + ")";
+      response.sendRedirect(oauthProperties.getFrontendUrl());
     } catch (Exception e) {
-      return "ID token validation failed: " + e.getMessage();
+      response.sendRedirect(oauthProperties.getFrontendUrl() + "?error=" + e.getMessage());
     }
   }
 
